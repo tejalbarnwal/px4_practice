@@ -7,7 +7,7 @@ import rospy
 
 
 def handle_add_two_ints(req):
-    print(f'retuning {req.a} + {req.b} = {req.a + req.b}')
+    print('retuning {} + {} = {}'.format(req.a,req.b,req.a+req.b))
     return add_two_intsResponse(req.a + req.b)
 
 
@@ -23,6 +23,6 @@ def add_two_ints_server():
     print("ready to add two ints")
     rospy.spin()
 
-if __name__="__main__":
+if __name__=="__main__":
     add_two_ints_server()    
 
