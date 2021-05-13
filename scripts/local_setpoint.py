@@ -120,5 +120,9 @@ if __name__=="__main__":
         else:
             yo.onstart_setpoint()                    
 
-                
+"""
+feedback to take previous setpoints into consideration
+setpoint_position/local gives global position
+already armed case remaining to be resolved in arming service
+"""                
                         
