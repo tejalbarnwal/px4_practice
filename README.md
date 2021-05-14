@@ -9,7 +9,7 @@
 - [Link](https://github.com/PX4/PX4-Autopilot/tree/master/integrationtests/python_src/px4_it/mavros)
 
 
-#### Installation Compilation
+#### Installation and Doubts Compilation
 [Link](https://docs.google.com/document/d/1L5RcXMsEIsUhA5MpqEHj9wAAMdXUwqiUAO0P-cUad6k/edit?usp=sharing)
 
 #### Conclusions Compilation
