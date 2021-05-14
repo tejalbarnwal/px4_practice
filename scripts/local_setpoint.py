@@ -5,7 +5,7 @@ import rospy
 from mavros_msgs.msg import State
 from mavros_msgs.srv import CommandBool, CommandBoolRequest,CommandBoolResponse, SetMode , SetModeRequest, SetModeResponse
 from geometry_msgs.msg import PoseStamped
-from tf.transformations import quaternion_from_euler
+from tf.transformations import quaternion_from_euler , euler_from_quaternion
 import time
 from std_msgs.msg import String
 import math
@@ -23,6 +23,7 @@ class local_setpoints_control():
 
         self.setpoint = PoseStamped()
         self.previous_setpoint = PoseStamped()
+        self.previous_rpy = None
 
         self.state_indicator = State()
         self.rate = rospy.Rate(10)
@@ -41,17 +42,20 @@ class local_setpoints_control():
         print(self.state_indicator.connected)
 
     def arming_service(self):
-        rospy.wait_for_service("/mavros/cmd/arming")
-        try:
-            arming_service = rospy.ServiceProxy("/mavros/cmd/arming",CommandBool)
-            self.isarmed.value = True
-            self.arming_response = arming_service(self.isarmed)
-            while (not rospy.is_shutdown()) and (self.state_indicator.connected) and (not(self.arming_response.success)):
+        if not self.state_indicator.armed:
+            rospy.wait_for_service("/mavros/cmd/arming")
+            try:
+                arming_service = rospy.ServiceProxy("/mavros/cmd/arming",CommandBool)
+                self.isarmed.value = True
                 self.arming_response = arming_service(self.isarmed)
-            print("-------------ARMING SUCCESSFULL------------")    
-            return True    
-        except rospy.ServiceException as e:
-            print("ERROR IN ARMING DRONE",e)
+                while (not rospy.is_shutdown()) and (self.state_indicator.connected) and (not(self.arming_response.success)):
+                    self.arming_response = arming_service(self.isarmed)
+                print("-------------ARMING SUCCESSFULL------------")    
+                return True    
+            except rospy.ServiceException as e:
+                print("ERROR IN ARMING DRONE",e)
+        else:
+            return True        
 
     def change_mode(self):
         rospy.wait_for_service("/mavros/set_mode")
@@ -74,7 +78,7 @@ class local_setpoints_control():
         self.setpoint.pose.orientation.z = 0
         self.setpoint.pose.orientation.w = 1
 
-        i = 100
+        i = 50
         print("condition--",(not rospy.is_shutdown()) ,(self.state_indicator.connected) ,(i > 0))
         while (not rospy.is_shutdown()) and (self.state_indicator.connected) and (i > 0):
             self.local_setpoint_pub.publish(self.setpoint)
@@ -82,17 +86,26 @@ class local_setpoints_control():
             print("setpoint", i)
             self.rate.sleep()
             if i == 1: 
+                self.previous_setpoint = self.setpoint
+                self.previous_rpy = list(euler_from_quaternion([self.previous_setpoint.pose.orientation.x,
+                                                                self.previous_setpoint.pose.orientation.y,
+                                                                self.previous_setpoint.pose.orientation.z,
+                                                                self.previous_setpoint.pose.orientation.w]))
                 return True
         else: 
             return False        
 
     def current_setpoint_callback(self , listxyz):
         listxyz = listxyz.data.split(" ")
-        self.setpoint.pose.position.x = float(listxyz[0])
-        self.setpoint.pose.position.y = float(listxyz[1])
-        self.setpoint.pose.position.z = float(listxyz[2])
 
-        self.rpy = [0.0 , 0.0 ,  - math.atan2(float(listxyz[1]) , float(listxyz[0]))]
+        delta_x = float(listxyz[0]) * math.cos(self.previous_rpy[2]) - float(listxyz[2]) * math.sin(self.previous_rpy[2])
+        delta_x = float(listxyz[0]) * math.sin(self.previous_rpy[2]) + float(listxyz[2]) * math.cos(self.previous_rpy[2])
+
+        self.setpoint.pose.position.x = self.previous_setpoint.pose.position.x + float(listxyz[0])
+        self.setpoint.pose.position.y = self.previous_setpoint.pose.position.y + float(listxyz[1])
+        self.setpoint.pose.position.z = self.previous_setpoint.pose.position.z + float(listxyz[2])
+
+        self.rpy = [0.0 , 0.0 ,  math.atan2(float(listxyz[1]) , float(listxyz[0]))]
 
         quaternion = quaternion_from_euler(self.rpy[0] , self.rpy[1] , self.rpy[2])
 
@@ -101,7 +114,11 @@ class local_setpoints_control():
         self.setpoint.pose.orientation.z = quaternion[2]
         self.setpoint.pose.orientation.w = quaternion[3] 
 
-
+        self.previous_setpoint = self.setpoint    
+        self.previous_rpy = list(euler_from_quaternion([self.previous_setpoint.pose.orientation.x,
+                                                                self.previous_setpoint.pose.orientation.y,
+                                                                self.previous_setpoint.pose.orientation.z,
+                                                                self.previous_setpoint.pose.orientation.w]))      
 
 
 if __name__=="__main__":
