@@ -5,7 +5,7 @@ import rospy
 from std_msgs.msg import String
 
 rospy.init_node("setpoint_taker")
-teju_setpoint = rospy.Publisher("/teju_give_setpoints" , String , queue_size = 1)
+teju_setpoint = rospy.Publisher("/teju/give_setpoints" , String , queue_size = 1)
 input_setpoint = String()
 
 while not rospy.is_shutdown():
