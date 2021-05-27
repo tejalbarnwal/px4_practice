@@ -2,17 +2,52 @@
 
 from __future__ import print_function
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Int32 , Float32
+import random
 
 rospy.init_node("setpoint_taker")
+teju_setpoint1 = rospy.Publisher("/teju/give_setpoints1" , Float32 , queue_size = 1)
+teju_setpoint2 = rospy.Publisher("/teju/give_setpoints2" , Float32 , queue_size = 1)
+teju_setpoint3 = rospy.Publisher("/teju/give_setpoints3" , Float32 , queue_size = 1)
+teju_setpoint4 = rospy.Publisher("/teju/give_setpoints4" , Float32 , queue_size = 1)
+teju_setpoint5 = rospy.Publisher("/teju/give_setpoints5" , Float32 , queue_size = 1)
+teju_setpoint6 = rospy.Publisher("/teju/give_setpoints6" , Float32 , queue_size = 1)
 teju_setpoint = rospy.Publisher("/teju/give_setpoints" , String , queue_size = 1)
-input_setpoint = String()
 
+
+
+input_setpoint = 0.001
+rate = rospy.Rate(20)
+i = 0
 while not rospy.is_shutdown():
-	print("setpoint:")
-	input_setpoint.data = raw_input()
-	teju_setpoint.publish(input_setpoint)
 
+        #print("put")
+        #input_setpoint = raw_input()
+        #teju_setpoint.publish(input_setpoint)
+
+        teju_setpoint1.publish(0.001)
+        teju_setpoint2.publish(-0.002)
+        teju_setpoint3.publish(0.004)
+        teju_setpoint4.publish(-0.008)
+        teju_setpoint5.publish(0.032)
+        teju_setpoint6.publish(-0.015)
+
+
+        rate.sleep()
+	#print("setpoint:")
+        # if i % 2 == 0:
+	#         input_setpoint.data = "0 0 1000"
+        #         teju_setpoint.publish(input_setpoint)
+        #         print("setpoint -", input_setpoint)
+        #         rate.sleep()
+        # else:
+        #         input_setpoint.data = "0 0 5" 
+        #         teju_setpoint.publish(input_setpoint)
+        #         print("setpoint -", input_setpoint) 
+        #         rate.sleep()    
+	# 
+        # i = i + 1
+        
 '''
 listrtz = listrtz.data.split(" ")
 

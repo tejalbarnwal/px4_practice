@@ -41,9 +41,9 @@ class local_setpoints_control():
 
     def state_callback(self,msg):
         print("Current mode of the drone" , msg.mode)
-        print("Is MAVROS connected to SITL", msg.connected)
+        # print("Is MAVROS connected to SITL", msg.connected)
         self.state_indicator = msg
-        print(self.state_indicator.connected)
+        # print(self.state_indicator.connected)
 
     def arming_service(self):
         if not self.state_indicator.armed:
@@ -83,7 +83,7 @@ class local_setpoints_control():
         self.setpoint.pose.orientation.w = 1
 
         i = 50
-        print("condition--",(not rospy.is_shutdown()) ,(self.state_indicator.connected) ,(i > 0))
+        # print("condition--",(not rospy.is_shutdown()) ,(self.state_indicator.connected) ,(i > 0))
         while (not rospy.is_shutdown()) and (self.state_indicator.connected) and (i > 0):
             self.local_setpoint_pub.publish(self.setpoint)
             i=i-1
@@ -96,6 +96,7 @@ class local_setpoints_control():
 
     def setpoint_position_local_callback(self , listxyz):
         listxyz = listxyz.data.split(" ")
+        print(listxyz)
 
         # delta_x = float(listxyz[0]) * math.cos(self.previous_rpy[2]) - float(listxyz[2]) * math.sin(self.previous_rpy[2])
         # delta_x = float(listxyz[0]) * math.sin(self.previous_rpy[2]) + float(listxyz[2]) * math.cos(self.previous_rpy[2])

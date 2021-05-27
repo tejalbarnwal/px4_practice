@@ -9,6 +9,7 @@ from tf.transformations import quaternion_from_euler , euler_from_quaternion
 import time
 from std_msgs.msg import String , Float64
 import math
+import random
 
 class local_setpoints_control():
     def __init__(self):
@@ -17,7 +18,7 @@ class local_setpoints_control():
         # subscriber to /mavros/state
         rospy.Subscriber("/mavros/state" ,State, self.state_callback , queue_size = 1)
         # rospy.Subscriber("/teju_give_setpoints" , String , self.setpoint_position_local_callback)
-        rospy.Subscriber("/teju/give_velocity" , String , self.setpoint_velocity_callback)
+        # rospy.Subscriber("/teju/give_velocity" , String , self.setpoint_velocity_callback)
 
         # self.local_setpoint_pub = rospy.Publisher("/mavros/setpoint_position/local", PoseStamped , queue_size=1)
         self.velocity_setpoint_pub = rospy.Publisher("/mavros/setpoint_velocity/cmd_vel" , TwistStamped , queue_size=1)
@@ -31,7 +32,7 @@ class local_setpoints_control():
         self.velocity_setpoint = TwistStamped()
 
         self.state_indicator = State()
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(3)
         self.set_mode = SetModeRequest()
         self.isarmed = CommandBoolRequest()
         self.arming_response = CommandBoolResponse()
@@ -39,6 +40,8 @@ class local_setpoints_control():
         self.setpoints_given = False
         self.rpy = None
 
+        self.i = 0
+        #self.rate = rospy.Rate(0.1)
 
     def state_callback(self,msg):
         print("Current mode of the drone" , msg.mode)
@@ -77,7 +80,7 @@ class local_setpoints_control():
     def onstart_setpoint(self):
         self.velocity_setpoint.twist.linear.x = 0.0
         self.velocity_setpoint.twist.linear.y = 0.0
-        self.velocity_setpoint.twist.linear.z = 0.4
+        self.velocity_setpoint.twist.linear.z = 0.2
 
         self.velocity_setpoint.twist.angular.x = 0.0
         self.velocity_setpoint.twist.angular.y = 0.0
@@ -96,43 +99,30 @@ class local_setpoints_control():
             return False  
 
 
-    def setpoint_velocity_callback(self , key) :
+    def setpoint_velocity_callback(self) :
         
         # vector_dir = vector_direction.data.split(" ")
         # self.velocity_setpoint.twist.angular.x = 0.0
         # self.velocity_setpoint.twist.angular.y = 0.0
-        key = key.data
-        print("key",key)
+        
+        self.velocity_setpoint.twist.linear.y = 0.0
+        self.velocity_setpoint.twist.linear.z = 0.0
 
-        if key == "w":
-            self.velocity_setpoint.twist.linear.x += 0.2
-        if key == "x":
-            self.velocity_setpoint.twist.linear.x -= 0.2    
-        if key == "a":    
-            self.velocity_setpoint.twist.linear.y += 0.2 
-        if key == "d":    
-            self.velocity_setpoint.twist.linear.y -= 0.2
-        if key == "s":
-            self.velocity_setpoint.twist.linear.z += 0.2
-        if key == "z":
+        self.velocity_setpoint.twist.angular.x = 0.0
+        self.velocity_setpoint.twist.angular.y = 0.0
+        self.velocity_setpoint.twist.angular.z = 0.0
 
-            self.velocity_setpoint.twist.linear.z -= 0.2        
-             
-        if key == "e":
-            self.velocity_setpoint.twist.angular.z += 0.2
-        if key == "r":
-            self.velocity_setpoint.twist.angular.z -= 0.2 
+        if self.i % 2 == 0:
+            self.velocity_setpoint.twist.linear.x = random.randint(1 , 10)
+        else:
+            self.velocity_setpoint.twist.linear.x= random.randint(-10 , -1)  
 
-        if key == "i":
-            self.velocity_setpoint.twist.angular.x += 0.2
-        if key == "j":
-            self.velocity_setpoint.twist.angular.x -= 0.2 
-            
-        if key == "o":
-            self.velocity_setpoint.twist.angular.y += 0.2
-        if key == "k":
-            self.velocity_setpoint.twist.angular.y -= 0.2             
 
+        self.velocity_setpoint_pub.publish(self.velocity_setpoint)
+        print("setpoint -", self.velocity_setpoint.twist.linear.x)
+
+
+        self.i = self.i + 1
         
 
 
@@ -147,19 +137,8 @@ if __name__=="__main__":
                     yo.onstart_setpoint()
 
                     while not rospy.is_shutdown():
-                        yo.velocity_setpoint_pub.publish(yo.velocity_setpoint)
-                        yo.vel_setpoint_x_pub.publish(yo.velocity_setpoint.twist.linear.x)
-                        yo.vel_setpoint_y_pub.publish(yo.velocity_setpoint.twist.linear.y)
-                        yo.vel_setpoint_z_pub.publish(yo.velocity_setpoint.twist.linear.z)
-                        yo.vel_setpoint_yaw_pub.publish(yo.velocity_setpoint.twist.angular.z)
-
-                        print("linear.xyz {} , {} , {}".format(yo.velocity_setpoint.twist.linear.x , 
-                                                                yo.velocity_setpoint.twist.linear.y , 
-                                                                yo.velocity_setpoint.twist.linear.z)) 
-
-                        print("angular.xyz {} , {} , {}".format( yo.velocity_setpoint.twist.angular.x , 
-                                                                 yo.velocity_setpoint.twist.angular.y , 
-                                                                 yo.velocity_setpoint.twist.angular.z))                                           
+                        yo.setpoint_velocity_callback()
+                        yo.rate.sleep()                                    
                     
 
         else:
