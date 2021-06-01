@@ -21,16 +21,16 @@ rate = rospy.Rate(20)
 i = 0
 while not rospy.is_shutdown():
 
-        #print("put")
-        #input_setpoint = raw_input()
-        #teju_setpoint.publish(input_setpoint)
+        print("put")
+        input_setpoint = raw_input()
+        teju_setpoint.publish(input_setpoint)
 
-        teju_setpoint1.publish(0.001)
-        teju_setpoint2.publish(-0.002)
-        teju_setpoint3.publish(0.004)
-        teju_setpoint4.publish(-0.008)
-        teju_setpoint5.publish(0.032)
-        teju_setpoint6.publish(-0.015)
+        # teju_setpoint1.publish(0.001)
+        # teju_setpoint2.publish(-0.002)
+        # teju_setpoint3.publish(0.004)
+        # teju_setpoint4.publish(-0.008)
+        # teju_setpoint5.publish(0.032)
+        # teju_setpoint6.publish(-0.015)
 
 
         rate.sleep()
