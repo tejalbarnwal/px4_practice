@@ -18,17 +18,41 @@ class local_setpoints_control():
         rospy.Subscriber("/mavros/state" ,State, self.state_callback , queue_size = 1)
         # rospy.Subscriber("/teju_give_setpoints" , String , self.setpoint_position_local_callback)
         rospy.Subscriber("/teju/give_velocity" , String , self.setpoint_velocity_callback)
+        rospy.Subscriber("/mavros/local_position/velocity_body" , TwistStamped , self.velocity_callback)
+        rospy.Subscriber("/mavros/local_position/pose" , PoseStamped , self.pose_callback)
+
 
         # self.local_setpoint_pub = rospy.Publisher("/mavros/setpoint_position/local", PoseStamped , queue_size=1)
         self.velocity_setpoint_pub = rospy.Publisher("/mavros/setpoint_velocity/cmd_vel" , TwistStamped , queue_size=1)
 
-        self.vel_setpoint_x_pub = rospy.Publisher("/teju/vel/x" , Float64 , queue_size=1)
-        self.vel_setpoint_y_pub = rospy.Publisher("/teju/vel/y" , Float64 , queue_size=1)
-        self.vel_setpoint_z_pub = rospy.Publisher("/teju/vel/z" , Float64 , queue_size=1)
-        self.vel_setpoint_yaw_pub = rospy.Publisher("/teju/vel/yaw" , Float64 , queue_size=1)
+        self.vel_setpoint_x_pub = rospy.Publisher("/velocity/setpoint/x" , Float64 , queue_size=1)
+        self.vel_setpoint_y_pub = rospy.Publisher("/velocity/setpoint/y" , Float64 , queue_size=1)
+        self.vel_setpoint_z_pub = rospy.Publisher("/velocity/setpoint/z" , Float64 , queue_size=1)
+        self.vel_setpoint_yaw_pub = rospy.Publisher("/velocity/setpoint/yaw" , Float64 , queue_size=1)
+
+        self.actual_x_pub = rospy.Publisher("/velocity/actual/x" , Float64 , queue_size=1)
+        self.actual_y_pub = rospy.Publisher("/velocity/actual/y" , Float64 , queue_size=1)
+        self.actual_z_pub = rospy.Publisher("/velocity/actual/z" , Float64 , queue_size=1)
+        self.actual_yaw_pub = rospy.Publisher("/velocity/actual/yaw" , Float64 , queue_size=1)
+
+        self.error_x_pub = rospy.Publisher("/velocity/error/x" , Float64 , queue_size=1)
+        self.error_y_pub = rospy.Publisher("/velocity/error/y" , Float64 , queue_size=1)
+        self.error_z_pub = rospy.Publisher("/velocity/error/z" , Float64 , queue_size=1)
+        self.error_yaw_pub = rospy.Publisher("/velocity/error/yaw" , Float64 , queue_size=1)
+
+        self.error_percent_x_pub = rospy.Publisher("/velocity/error_percent/x" , Float64 , queue_size=1)
+        self.error_percent_y_pub = rospy.Publisher("/velocity/error_percent/y" , Float64 , queue_size=1)
+        self.error_percent_z_pub = rospy.Publisher("/velocity/error_percent/z" , Float64 , queue_size=1)
+        self.error_percent_yaw_pub = rospy.Publisher("/velocity/error_percent/yaw" , Float64 , queue_size=1)
+
+        self.actual_px_pub = rospy.Publisher("/position/actual/x" , Float64 , queue_size=1)
+        self.actual_py_pub = rospy.Publisher("/position/actual/y" , Float64 , queue_size=1)
+        self.actual_pz_pub = rospy.Publisher("/position/actual/z" , Float64 , queue_size=1)
 
 
         self.velocity_setpoint = TwistStamped()
+        self.actual = TwistStamped()
+        self.position = PoseStamped()
 
         self.state_indicator = State()
         self.rate = rospy.Rate(10)
@@ -39,6 +63,11 @@ class local_setpoints_control():
         self.setpoints_given = False
         self.rpy = None
 
+    def pose_callback(self , msg):
+        self.position = msg
+
+    def velocity_callback(self , msg):
+        self.actual = msg    
 
     def state_callback(self,msg):
         print("Current mode of the drone" , msg.mode)
@@ -133,7 +162,46 @@ class local_setpoints_control():
         if key == "k":
             self.velocity_setpoint.twist.angular.y -= 0.2             
 
+    def publishing(self):
+        self.velocity_setpoint_pub.publish(self.velocity_setpoint)
+
+        self.vel_setpoint_x_pub.publish(self.velocity_setpoint.twist.linear.x)
+        self.vel_setpoint_y_pub.publish(self.velocity_setpoint.twist.linear.y)
+        self.vel_setpoint_z_pub.publish(self.velocity_setpoint.twist.linear.z)
+        self.vel_setpoint_yaw_pub.publish(self.velocity_setpoint.twist.angular.z)    
+
+        self.actual_x_pub.publish(self.actual.twist.linear.x)
+        self.actual_y_pub.publish(self.actual.twist.linear.y)
+        self.actual_z_pub.publish(self.actual.twist.linear.z)
+        self.actual_yaw_pub.publish(self.actual.twist.angular.z)
+
+        self.error_x_pub.publish((self.velocity_setpoint.twist.linear.x - self.actual.twist.linear.x))
+        self.error_y_pub.publish((self.velocity_setpoint.twist.linear.y - self.actual.twist.linear.y))
+        self.error_z_pub.publish((self.velocity_setpoint.twist.linear.z - self.actual.twist.linear.z))
+        self.error_yaw_pub.publish((self.velocity_setpoint.twist.angular.z - self.actual.twist.angular.z))
+
+        self.actual_px_pub.publish(self.position.pose.position.x)
+        self.actual_py_pub.publish(self.position.pose.position.y)  
+        self.actual_pz_pub.publish(self.position.pose.position.z)  
+
+        if self.velocity_setpoint.twist.linear.x != 0:
+            self.error_percent_x_pub.publish(
+                        abs((self.velocity_setpoint.twist.linear.x - self.actual.twist.linear.x) / self.velocity_setpoint.twist.linear.x))
+
+        if self.velocity_setpoint.twist.linear.y != 0:
+            self.error_percent_y_pub.publish(
+                        abs((self.velocity_setpoint.twist.linear.y - self.actual.twist.linear.y) / self.velocity_setpoint.twist.linear.y))
         
+        if self.velocity_setpoint.twist.linear.z != 0:
+            self.error_percent_z_pub.publish(
+                        abs((self.velocity_setpoint.twist.linear.x - self.actual.twist.linear.z) / self.velocity_setpoint.twist.linear.z))
+
+        if self.velocity_setpoint.twist.angular.z != 0:
+            self.error_percent_yaw_pub.publish(
+                        abs((self.velocity_setpoint.twist.angular.z - self.actual.twist.angular.z) / self.velocity_setpoint.twist.angular.z))                                    
+
+
+
 
 
 if __name__=="__main__":
@@ -147,11 +215,7 @@ if __name__=="__main__":
                     yo.onstart_setpoint()
 
                     while not rospy.is_shutdown():
-                        yo.velocity_setpoint_pub.publish(yo.velocity_setpoint)
-                        yo.vel_setpoint_x_pub.publish(yo.velocity_setpoint.twist.linear.x)
-                        yo.vel_setpoint_y_pub.publish(yo.velocity_setpoint.twist.linear.y)
-                        yo.vel_setpoint_z_pub.publish(yo.velocity_setpoint.twist.linear.z)
-                        yo.vel_setpoint_yaw_pub.publish(yo.velocity_setpoint.twist.angular.z)
+                        yo.publishing()
 
                         print("linear.xyz {} , {} , {}".format(yo.velocity_setpoint.twist.linear.x , 
                                                                 yo.velocity_setpoint.twist.linear.y , 
