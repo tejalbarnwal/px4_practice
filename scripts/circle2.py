@@ -18,6 +18,8 @@ class rate_controller():
         rospy.Subscriber("/mavros/state", State , self.state_callback, queue_size = 1)
         rospy.Subscriber("/mavros/local_position/pose" , PoseStamped, self.pose_callback , queue_size =1 )
 
+        rospy.Subscriber("/mavros/local_position/velocity_body", TwistStamped , self.vel_callback , queue_size=1)
+
 
         rospy.Subscriber("/teju/roll_pub" , Float32 , self.roll_rate_call , queue_size = 1)
         rospy.Subscriber("/teju/pitch_pub" , Float32 , self.pitch_rate_call , queue_size = 1)
@@ -34,9 +36,19 @@ class rate_controller():
 
 
 
-        self.roll_pub = rospy.Publisher("/teju/roll" , Float32 , queue_size = 1)
-        self.pitch_pub = rospy.Publisher("/teju/pitch" , Float32 , queue_size = 1)
-        self.yaw_pub = rospy.Publisher("/teju/yaw" , Float32 , queue_size = 1)
+        self.roll_pub = rospy.Publisher("/setpoint/roll" , Float32 , queue_size = 1)
+        self.pitch_pub = rospy.Publisher("/setpoint/pitch" , Float32 , queue_size = 1)
+        self.yaw_pub = rospy.Publisher("/setpoint/yaw" , Float32 , queue_size = 1)
+
+        self.actual_roll_pub = rospy.Publisher("/actual/roll" , Float32 , queue_size = 1)
+        self.actual_pitch_pub = rospy.Publisher("/actual/pitch" , Float32 , queue_size = 1)
+        self.actual_yaw_pub = rospy.Publisher("/actual/yaw" , Float32 , queue_size = 1)
+
+        self.error_roll_pub = rospy.Publisher("/error/roll" , Float32 , queue_size = 1)
+        self.error_pitch_pub = rospy.Publisher("/error/pitch" , Float32 , queue_size = 1)
+        self.error_yaw_pub = rospy.Publisher("/error/yaw" , Float32 , queue_size = 1)
+
+
 
         # VARIABLE TO CHECKOUT
         self.velocity_setpoint = TwistStamped()
@@ -67,6 +79,11 @@ class rate_controller():
         self.roll_rate = 0.0
         self.pitch_rate = 0.0
         self.yaw_rate = 0.0
+
+        self.actual_vel = TwistStamped()
+
+    def vel_callback(self, msg):
+        self.actual_vel = msg    
 
     def state_callback(self , msg):
         self.state_indicator = msg
@@ -247,7 +264,16 @@ class rate_controller():
         self.attitude_raw_setpoint_publisher.publish(self.attitude_raw_setpoint)
         self.roll_pub.publish(self.roll_rate)
         self.pitch_pub.publish(self.pitch_rate)    
-        self.yaw_pub.publish(self.yaw_rate)    
+        self.yaw_pub.publish(self.yaw_rate) 
+
+        self.actual_roll_pub.publish(self.actual_vel.twist.angular.x)
+        self.actual_pitch_pub.publish(self.actual_vel.twist.angular.y)
+        self.actual_yaw_pub.publish(self.actual_vel.twist.angular.z)
+
+        self.error_roll_pub.publish(self.roll_rate - self.actual_vel.twist.angular.x)
+        self.error_pitch_pub.publish(self.pitch_rate - self.actual_vel.twist.angular.y)   
+        self.error_yaw_pub.publish(self.yaw_rate - self.actual_vel.twist.angular.z)   
+
 
 
 

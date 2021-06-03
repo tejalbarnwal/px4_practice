@@ -17,7 +17,7 @@ rate = rospy.Rate(20)
 
 while not rospy.is_shutdown():
         print ("put")
-        roll_set = float(input())
+        yaw_set = float(input())
         roll.publish(roll_set)
 
         #pitch_set = int(input_raw())
