@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<sdf version = "1.5">
+  <model name="tree1">
+    <static>true</static>
+    
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://tree1/meshes/cartoontree.stl</uri>
+            <scale>0.5 0.5 0.5</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://tree1/meshes/cartoontree.dae</uri>
+            <scale>0.5 0.5 0.5</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+  </model>
+</sdf>
