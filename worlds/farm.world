@@ -1033,7 +1033,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>12.8372 22.1025 0 0 -0 0</pose>
+      <pose frame=''>12.5693 22.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_2'>
       <static>1</static>
@@ -1222,7 +1222,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>10.9477 22.1025 0 0 -0 0</pose>
+      <pose frame=''>10.5693 22.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_3'>
       <static>1</static>
@@ -1411,7 +1411,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>8.42836 22.024 0 0 -0 0</pose>
+      <pose frame=''>8.5693 22.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_0'>
       <static>1</static>
@@ -1600,7 +1600,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.1203 19.8195 0 0 -0 0</pose>
+      <pose frame=''>14.5693 20.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_1'>
       <static>1</static>
@@ -1789,7 +1789,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.199 16.9854 0 0 -0 0</pose>
+      <pose frame=''>14.5693 18.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_2'>
       <static>1</static>
@@ -1978,7 +1978,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.2778 14.3871 0 0 -0 0</pose>
+      <pose frame=''>14.5693 16.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_3'>
       <static>1</static>
@@ -2167,7 +2167,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.0416 11.7103 0 0 -0 0</pose>
+      <pose frame=''>14.5693 14.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_4'>
       <static>1</static>
@@ -2356,7 +2356,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.199 9.66332 0 0 -0 0</pose>
+      <pose frame=''>14.5693 12.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_5'>
       <static>1</static>
@@ -2545,7 +2545,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.199 7.14389 0 0 -0 0</pose>
+      <pose frame=''>14.5693 12.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_6'>
       <static>1</static>
@@ -2734,7 +2734,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.2778 4.78212 0 0 -0 0</pose>
+      <pose frame=''>14.5693 10.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_7'>
       <static>1</static>
@@ -2923,7 +2923,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>15.5927 2.73516 0 0 -0 0</pose>
+      <pose frame=''>14.5693 8.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_8'>
       <static>1</static>
@@ -3112,7 +3112,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>6.30256 22.2601 0 0 -0 0</pose>
+      <pose frame=''>6.5693 22.1025 0 0 -0 0</pose>
     </model>
     <model name='tomato_0_9'>
       <static>1</static>
@@ -3490,7 +3490,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose frame=''>2.05122 22.3389 0 0 -0 0</pose>
+      <pose frame=''>4.5693 22.1025 0 0 -0 0</pose>
     </model>
     <gui fullscreen='0'>
       <camera name='user_camera'>
