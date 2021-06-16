@@ -9,7 +9,7 @@
         <geometry>
           <mesh>
             <uri>model://Tree_2/Tree_2.dae</uri>
-            <scale>2 2 2</scale>
+            <scale>4 4 4</scale>
           </mesh>
         </geometry>
       </visual>
@@ -17,7 +17,7 @@
         <geometry>
           <mesh>
             <uri>model://Tree_2/Tree_2.dae</uri>
-            <scale>2 2 2</scale>
+            <scale>4 4 4</scale>
           </mesh>
         </geometry>
       </collision>

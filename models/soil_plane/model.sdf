@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="asphalt_plane">
+  <model name="soil_plane">
     <static>true</static>
     <link name="link">
       <collision name="collision">

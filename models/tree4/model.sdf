@@ -6,11 +6,11 @@
     <link name="link">
       <collision name="collision">
         <geometry>
-          <mesh>
-            <uri>model://tree4/meshes/tree.stl</uri>
-            <scale>0.1 0.1 0.1</scale>
-          </mesh>
+          <box>
+            <size>1.8 1.8 2</size>
+          </box>
         </geometry>
+        <pose> 0 0 0 1.57 0 0</pose>
       </collision>
 
       <visual name="visual">
@@ -20,6 +20,7 @@
             <scale>0.1 0.1 0.1</scale>
           </mesh>
         </geometry>
+        <pose> 0 0 0 1.57 0 0</pose>
       </visual>
     </link>
 
