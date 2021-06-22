@@ -10,7 +10,7 @@ import time
 from std_msgs.msg import String
 import math
 
-class local_setpoints_control():
+class raster_setpoints_control():
     def __init__(self):
         rospy.init_node("raster_scan_node")
 
@@ -20,7 +20,7 @@ class local_setpoints_control():
         self.teju_setpoint = rospy.Publisher("/teju/give_setpoints" , String , queue_size = 1)
 
         self.raster_points = [ [0,10], [2,0], [0,-10], [2,0] ]
-        self.initial = [0,0]
+        self.estimate_pose = [0,0]
 
     def odom_callback(self , msg):
         self.pose_x = msg.pose.position.x
@@ -28,11 +28,29 @@ class local_setpoints_control():
 
 
     def action(self , rounds):
-
+        
         for i in rounds :
-            for j in raster_points:
-                if self.pose_x <= self.initial + 
-                    self.teju_setpoint.publish(j)
+            for j in self.raster_points:
+                    if abs(self.pose_x - self.estimate_pose) <= 0.01 and abs(self.pose_y-self.estimate_pose[1]) <= 0.01:
+                        
+                        self.teju_setpoint.publish(f"{j[0]} {j[1]} 0")
+                        self.estimate_pose[0] = self.estimate_pose[0] + j[0]
+                        self.estimate_pose[1] = self.estimate_pose[1] + j[1]
+                    else:
+                        while abs(self.pose_x - self.estimate_pose) >= 0.01 and abs(self.pose_y-self.estimate_pose[1]) >= 0.01:
+                            pass
+
+
+if __name__=="__main__":
+    yo = raster_setpoints_control()
+    print("put no.of rounds for raster")
+    num_rounds = raw_input()
+    yo.action(int(num_rounds))
+    #rospy.spin()
+    
+
+
+
 
 
 
