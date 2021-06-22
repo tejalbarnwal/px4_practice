@@ -17,7 +17,7 @@ class local_setpoints_control():
         # subscriber to /mavros/state
         rospy.Subscriber("/mavros/state" ,State, self.state_callback , queue_size = 1)
         
-        rospy.Subscriber("/teju_give_setpoints" , String , self.setpoint_position_local_callback)
+        rospy.Subscriber("/teju/give_setpoints" , String , self.setpoint_position_local_callback)
 
         self.local_setpoint_pub = rospy.Publisher("/mavros/setpoint_position/local", PoseStamped , queue_size=1)
 
